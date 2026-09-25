@@ -344,6 +344,20 @@ st.markdown(
 # Initialize Controller
 controller = ScraperController()
 
+# Pre-warmup Playwright browser on Streamlit Cloud (Linux) in background
+def _bg_prepare_cloud_browser():
+    import sys, os, subprocess
+    if sys.platform.startswith("linux"):
+        ms_cache = os.path.expanduser("~/.cache/ms-playwright")
+        if not os.path.exists(ms_cache) or not os.listdir(ms_cache):
+            try:
+                subprocess.run([sys.executable, "-m", "playwright", "install", "chromium"], timeout=180)
+            except Exception:
+                pass
+
+import threading
+threading.Thread(target=_bg_prepare_cloud_browser, daemon=True).start()
+
 if "prev_running" not in st.session_state:
     st.session_state.prev_running = controller.is_running
 

@@ -148,31 +148,71 @@ class ScraperController:
         areas_copy = areas.copy()
         random.shuffle(areas_copy)
 
-        # Launch browser with Google Chrome fallback or Chromium
+        # Launch browser with multi-platform detection & auto-installation
         async with async_playwright() as p:
             browser = None
-            chrome_app_path = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+            mac_chrome = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+            
+            # Linux system chromium candidates (installed via packages.txt on Streamlit Cloud)
+            linux_candidates = [
+                "/usr/bin/chromium",
+                "/usr/bin/chromium-browser",
+                "/usr/bin/google-chrome",
+                "/usr/bin/google-chrome-stable",
+            ]
+            system_chromium = next((c for c in linux_candidates if os.path.exists(c)), None)
 
             launch_options = {
                 "headless": True,
-                "args": ["--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu"]
+                "args": [
+                    "--no-sandbox",
+                    "--disable-dev-shm-usage",
+                    "--disable-gpu",
+                    "--disable-setuid-sandbox"
+                ]
             }
 
-            try:
-                if os.path.exists(chrome_app_path):
+            # 1. Try Mac Chrome
+            if os.path.exists(mac_chrome):
+                try:
                     self.add_log("INFO", "Menggunakan Google Chrome lokal Mac...")
-                    browser = await p.chromium.launch(
-                        executable_path=chrome_app_path,
-                        **launch_options
-                    )
-                else:
-                    browser = await p.chromium.launch(
-                        channel="chrome",
-                        **launch_options
-                    )
-            except Exception as e:
-                self.add_log("INFO", f"Menggunakan Chromium bawaan: {e}")
-                browser = await p.chromium.launch(**launch_options)
+                    browser = await p.chromium.launch(executable_path=mac_chrome, **launch_options)
+                except Exception:
+                    browser = None
+
+            # 2. Try Linux System Chromium (Streamlit Cloud apt package)
+            if browser is None and system_chromium:
+                try:
+                    self.add_log("INFO", f"Menggunakan Chromium Linux ({system_chromium})...")
+                    browser = await p.chromium.launch(executable_path=system_chromium, **launch_options)
+                except Exception as ex_sys:
+                    self.add_log("INFO", f"Chromium sistem tidak merespons ({ex_sys}), mencoba Playwright bundler...")
+                    browser = None
+
+            # 3. Try Playwright bundled Chromium with Auto-Install fallback
+            if browser is None:
+                try:
+                    self.add_log("INFO", "Membuka Chromium Playwright...")
+                    browser = await p.chromium.launch(**launch_options)
+                except Exception as e:
+                    err_msg = str(e)
+                    if "Executable doesn't exist" in err_msg or "playwright install" in err_msg:
+                        self.add_log("WARN", "Browser belum terpasang di Cloud Server. Mengunduh otomatis (sekali saja)...")
+                        update_live_progress("RUNNING", "Mengunduh Chromium di Cloud Server...", 0, webapp_url)
+                        
+                        import subprocess
+                        import sys
+                        subprocess.run(
+                            [sys.executable, "-m", "playwright", "install", "chromium"],
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE,
+                            text=True,
+                            timeout=180
+                        )
+                        self.add_log("SUCCESS", "Chromium berhasil diunduh di Cloud Server.")
+                        browser = await p.chromium.launch(**launch_options)
+                    else:
+                        raise e
 
             context = await browser.new_context(
                 locale="id-ID",
