@@ -190,7 +190,10 @@ class ScraperController:
                 self.add_log("SEARCH", f"Menyisir: {area}...")
                 update_live_progress("RUNNING", f"Menyisir: <b>{area}</b>", total_saved, webapp_url)
 
-                query = f"{keyword} di {area}, Kalimantan Selatan"
+                if any(k in area.lower() for k in ["kalimantan", "jawa", "sulawesi", "sumatera", "jakarta", "bali", "kotamadya", "kabupaten", ","]):
+                    query = f"{keyword} di {area}"
+                else:
+                    query = f"{keyword} di {area}, Kalimantan Selatan"
                 url = f"https://www.google.com/maps/search/{query.replace(' ', '+')}"
 
                 try:

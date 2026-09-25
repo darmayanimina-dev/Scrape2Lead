@@ -1,7 +1,7 @@
 import time
 import pandas as pd
 import streamlit as st
-from config import DEFAULT_SHEETS_WEBAPP_URL, AREAS_KALSEL, PRESET_KEYWORDS
+from config import DEFAULT_SHEETS_WEBAPP_URL, AREAS_KALSEL, REGIONS_KALSEL, PRESET_KEYWORDS
 from scraper_engine import ScraperController
 from sheets_service import get_existing_numbers, update_live_progress
 
@@ -372,6 +372,62 @@ with col_ctrl:
                 disabled=controller.is_running,
             )
 
+            # Pengaturan Wilayah / Daerah Target
+            st.markdown("<div style='margin-top: 0.6rem; font-size: 0.86rem; font-weight: 700; color: #334155;'>📍 Pengaturan Wilayah Target:</div>", unsafe_allow_html=True)
+            area_mode = st.radio(
+                "Mode Wilayah",
+                options=["Semua Kalsel", "Pilih Kota / Kab", "Pilih Kecamatan", "Kustom / Kota Lain"],
+                horizontal=True,
+                label_visibility="collapsed",
+                disabled=controller.is_running,
+            )
+
+            final_selected_areas = None
+
+            if area_mode == "Semua Kalsel":
+                final_selected_areas = AREAS_KALSEL
+                st.caption("✅ Menyisir seluruh kecamatan & kota di Kalimantan Selatan secara acak presisi.")
+
+            elif area_mode == "Pilih Kota / Kab":
+                selected_cities = st.multiselect(
+                    "Pilih Kabupaten / Kota:",
+                    options=list(REGIONS_KALSEL.keys()),
+                    default=["Kota Banjarmasin", "Kota Banjarbaru"],
+                    disabled=controller.is_running,
+                    help="Semua kecamatan di dalam kota/kabupaten yang dipilih akan disisir otomatis."
+                )
+                if selected_cities:
+                    final_selected_areas = [area for city in selected_cities for area in REGIONS_KALSEL[city]]
+                    st.caption(f"📍 Mencakup {len(final_selected_areas)} kecamatan di {len(selected_cities)} wilayah.")
+                else:
+                    st.warning("Pilih minimal satu kota/kabupaten.")
+                    final_selected_areas = AREAS_KALSEL
+
+            elif area_mode == "Pilih Kecamatan":
+                chosen_kec = st.multiselect(
+                    "Pilih Kecamatan / Daerah Spesifik:",
+                    options=AREAS_KALSEL,
+                    default=["Banjarmasin Tengah", "Banjarbaru Utara", "Martapura"],
+                    disabled=controller.is_running,
+                    help="Ketik untuk mencari kecamatan tertentu."
+                )
+                final_selected_areas = chosen_kec if chosen_kec else AREAS_KALSEL
+                st.caption(f"📍 {len(final_selected_areas)} kecamatan spesifik dipilih.")
+
+            elif area_mode == "Kustom / Kota Lain":
+                custom_area_text = st.text_input(
+                    "Ketik Kota / Daerah Bebas (pisahkan koma):",
+                    value="Banjarmasin, Banjarbaru, Martapura",
+                    placeholder="Contoh: Balikpapan, Samarinda, Jakarta Selatan, Surabaya...",
+                    disabled=controller.is_running,
+                    help="Bisa diisi nama kota mana saja di Indonesia."
+                )
+                parsed = [x.strip() for x in custom_area_text.split(",") if x.strip()]
+                final_selected_areas = parsed if parsed else AREAS_KALSEL
+                st.caption(f"📍 Mencakup {len(final_selected_areas)} lokasi kustom.")
+
+            st.session_state["active_areas"] = final_selected_areas
+
             # Primary Action Button inside the inner card
             if not controller.is_running:
                 if st.button("Mulai Cari Data", type="primary", use_container_width=True):
@@ -383,7 +439,7 @@ with col_ctrl:
                         controller.start_scraping(
                             keyword=keyword_input,
                             target=int(target_input),
-                            areas=st.session_state.get("selected_areas", None),
+                            areas=final_selected_areas,
                             webapp_url=st.session_state.get("custom_sheets_url", controller.webapp_url)
                         )
                         st.rerun()
@@ -406,20 +462,6 @@ with col_ctrl:
                     controller.existing_numbers_count = len(existing)
                     st.toast(f"Terkoneksi! {len(existing)} nomor di database.")
                     st.rerun()
-
-        # Wilayah & Options Expander
-        with st.expander("📍 Pengaturan Wilayah Target (Kalsel)", expanded=False):
-            select_all_areas = st.checkbox("Saring Semua Kecamatan/Kota Kalsel (Acak)", value=True, disabled=controller.is_running)
-            if not select_all_areas:
-                selected_areas = st.multiselect(
-                    "Pilih Kecamatan / Wilayah Khusus:",
-                    options=AREAS_KALSEL,
-                    default=AREAS_KALSEL[:5],
-                    disabled=controller.is_running,
-                )
-                st.session_state["selected_areas"] = selected_areas
-            else:
-                st.session_state["selected_areas"] = None
 
         # Webhook & Google Sheets Setting Expander
         with st.expander("🔗 Konfigurasi Google Sheets WebApp", expanded=False):
