@@ -23,10 +23,30 @@ st.markdown(
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
-    /* Main container background */
-    .stApp {
-        background-color: #f8fafc;
-        color: #0f172a;
+    /* Pure Light Mode Enforcement */
+    :root {
+        color-scheme: light !important;
+    }
+    
+    html, body, [class*="css"], .stApp {
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        background-color: #f8fafc !important;
+        color: #0f172a !important;
+    }
+
+    /* Force all Streamlit components to stay in crisp Light Mode */
+    div[data-baseweb="input"], div[data-baseweb="select"], div[data-baseweb="base-input"] {
+        background-color: #ffffff !important;
+        color: #0f172a !important;
+        border-color: #cbd5e1 !important;
+    }
+    div[data-baseweb="input"] input, div[data-baseweb="select"] * {
+        color: #0f172a !important;
+        -webkit-text-fill-color: #0f172a !important;
+    }
+    /* iOS input font-size to prevent unwanted auto-zoom */
+    input, select, textarea {
+        font-size: 16px !important;
     }
 
     /* Header styling */
@@ -34,82 +54,50 @@ st.markdown(
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0.75rem 0 1.25rem 0;
+        padding: 0.5rem 0 1rem 0;
         border-bottom: 1px solid #e2e8f0;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1.25rem;
+        flex-wrap: wrap;
+        gap: 0.75rem;
     }
     .app-title-box {
         display: flex;
         align-items: center;
-        gap: 0.75rem;
+        gap: 0.65rem;
     }
     .app-icon {
         background: linear-gradient(135deg, #2563eb, #1d4ed8);
         color: white;
-        width: 42px;
-        height: 42px;
+        width: 38px;
+        height: 38px;
         border-radius: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.3rem;
+        font-size: 1.2rem;
         box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+        flex-shrink: 0;
     }
     .app-title {
-        font-size: 1.4rem;
+        font-size: 1.3rem;
         font-weight: 800;
         color: #0f172a;
         margin: 0;
         letter-spacing: -0.02em;
+        line-height: 1.2;
     }
     .app-subtitle {
-        font-size: 0.82rem;
+        font-size: 0.78rem;
         color: #64748b;
         margin: 0;
     }
 
-    /* Canvassing Controller Card (matching reference mockup) */
-    .controller-panel {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        padding: 1.5rem;
-        box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
-        margin-bottom: 1.25rem;
-    }
-    .panel-header-title {
-        font-size: 1.15rem;
-        font-weight: 700;
-        color: #1e293b;
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-    .inner-blue-box {
-        background: #f8faff;
-        border: 1px solid #dbeafe;
-        border-radius: 12px;
-        padding: 1.25rem;
-        margin-bottom: 1.25rem;
-    }
-    .inner-blue-title {
-        color: #2563eb;
-        font-size: 1.05rem;
-        font-weight: 700;
-        margin-top: 0;
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
     /* Metric cards */
     .metric-card {
-        background: #ffffff;
+        background: #ffffff !important;
         border: 1px solid #e2e8f0;
         border-radius: 12px;
-        padding: 1.1rem;
+        padding: 0.9rem;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
         transition: all 0.2s ease;
     }
@@ -118,34 +106,37 @@ st.markdown(
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
     .metric-label {
-        font-size: 0.78rem;
-        font-weight: 600;
+        font-size: 0.72rem;
+        font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.05em;
         color: #64748b;
-        margin-bottom: 0.35rem;
+        margin-bottom: 0.25rem;
     }
     .metric-value {
-        font-size: 1.6rem;
+        font-size: 1.45rem;
         font-weight: 800;
         color: #0f172a;
         margin: 0;
         line-height: 1.2;
     }
     .metric-sub {
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         color: #94a3b8;
-        margin-top: 0.25rem;
+        margin-top: 0.2rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     /* Status Pills */
     .status-pill {
         display: inline-flex;
         align-items: center;
-        gap: 0.4rem;
-        padding: 0.25rem 0.75rem;
+        gap: 0.35rem;
+        padding: 0.25rem 0.65rem;
         border-radius: 9999px;
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         font-weight: 700;
         letter-spacing: 0.03em;
     }
@@ -188,8 +179,9 @@ st.markdown(
         color: #ffffff !important;
         font-weight: 700 !important;
         font-size: 0.95rem !important;
+        min-height: 44px !important;
         padding: 0.6rem 1.25rem !important;
-        border-radius: 8px !important;
+        border-radius: 10px !important;
         transition: all 0.2s ease !important;
         box-shadow: 0 2px 4px rgba(22, 163, 74, 0.25) !important;
     }
@@ -201,8 +193,12 @@ st.markdown(
 
     /* Secondary button styling */
     div[data-testid="stButton"] button[kind="secondary"] {
-        border-radius: 8px !important;
+        border-radius: 10px !important;
         font-weight: 600 !important;
+        min-height: 40px !important;
+        background-color: #ffffff !important;
+        color: #1e293b !important;
+        border: 1px solid #cbd5e1 !important;
     }
 
     /* Activity Terminal */
@@ -211,10 +207,10 @@ st.markdown(
         color: #e2e8f0;
         font-family: 'JetBrains Mono', monospace;
         border-radius: 12px;
-        padding: 1rem;
-        height: 280px;
+        padding: 0.85rem;
+        height: 260px;
         overflow-y: auto;
-        font-size: 0.78rem;
+        font-size: 0.75rem;
         line-height: 1.5;
         border: 1px solid #1e293b;
     }
@@ -232,11 +228,12 @@ st.markdown(
 
     /* Leads Card */
     .lead-card {
-        background: #ffffff;
+        background: #ffffff !important;
         border: 1px solid #e2e8f0;
-        border-radius: 10px;
+        border-radius: 12px;
         padding: 0.85rem 1rem;
         margin-bottom: 0.65rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
         transition: transform 0.15s ease, border-color 0.15s ease;
     }
     .lead-card:hover {
@@ -253,11 +250,13 @@ st.markdown(
         color: #059669;
         font-weight: 600;
         font-size: 0.85rem;
+        margin-top: 0.15rem;
     }
     .lead-meta {
-        font-size: 0.76rem;
+        font-size: 0.75rem;
         color: #64748b;
-        margin-top: 0.25rem;
+        margin-top: 0.35rem;
+        line-height: 1.4;
     }
 
     /* Hide default streamlit decorations */
@@ -265,9 +264,77 @@ st.markdown(
     footer {visibility: hidden;}
     header {visibility: hidden;}
     .block-container {
-        padding-top: 1.5rem !important;
+        padding-top: 1.25rem !important;
         padding-bottom: 2rem !important;
         max-width: 1400px;
+    }
+
+    /* =========================================
+       📱 MOBILE RESPONSIVE OPTIMIZATIONS (<768px)
+       ========================================= */
+    @media (max-width: 768px) {
+        .block-container {
+            padding-left: 0.65rem !important;
+            padding-right: 0.65rem !important;
+            padding-top: 0.65rem !important;
+        }
+        .app-header {
+            margin-bottom: 0.75rem !important;
+            padding-bottom: 0.5rem !important;
+            gap: 0.35rem !important;
+        }
+        .app-title {
+            font-size: 1.05rem !important;
+            white-space: nowrap !important;
+        }
+        .app-subtitle {
+            display: none !important; /* Hide long subtitle on mobile to keep header clean */
+        }
+        .app-icon {
+            width: 30px !important;
+            height: 30px !important;
+            font-size: 0.95rem !important;
+        }
+        
+        /* 2x2 grid for metrics cards on smartphone screens */
+        [data-testid="column"]:has(.metric-card) {
+            min-width: 48% !important;
+            flex: 1 1 48% !important;
+            margin-bottom: 0.5rem;
+        }
+        .metric-card {
+            padding: 0.65rem !important;
+        }
+        .metric-value {
+            font-size: 1.25rem !important;
+        }
+        .metric-label {
+            font-size: 0.68rem !important;
+        }
+
+        /* Lead Card mobile buttons */
+        .lead-action-btns {
+            margin-top: 0.5rem;
+            display: flex;
+            width: 100%;
+            gap: 0.5rem;
+        }
+        .lead-action-btns a {
+            flex: 1;
+            text-align: center;
+            padding: 0.45rem 0.5rem !important;
+            font-size: 0.78rem !important;
+        }
+        .lead-header-row {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+        }
+
+        /* Terminal responsive height */
+        .terminal-container {
+            height: 200px !important;
+            font-size: 0.72rem !important;
+        }
     }
     </style>
     """,
@@ -596,14 +663,14 @@ with col_dash:
                     st.markdown(
                         f"""
                         <div class="lead-card">
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div class="lead-header-row" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem;">
                                 <div>
                                     <div class="lead-name">{item['name']}</div>
                                     <div class="lead-phone">📞 {item['phone']}</div>
                                 </div>
-                                <div style="display: flex; gap: 0.4rem;">
-                                    <a href="https://wa.me/{wa_clean}" target="_blank" style="text-decoration: none; background: #25d366; color: white; padding: 0.25rem 0.6rem; border-radius: 6px; font-size: 0.72rem; font-weight: 700;">WhatsApp</a>
-                                    <a href="{item.get('url', '#')}" target="_blank" style="text-decoration: none; background: #f1f5f9; color: #3b82f6; border: 1px solid #cbd5e1; padding: 0.25rem 0.6rem; border-radius: 6px; font-size: 0.72rem; font-weight: 600;">Maps</a>
+                                <div class="lead-action-btns" style="display: flex; gap: 0.4rem;">
+                                    <a href="https://wa.me/{wa_clean}" target="_blank" style="text-decoration: none; background: #25d366; color: white; padding: 0.35rem 0.75rem; border-radius: 8px; font-size: 0.75rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center;">WhatsApp</a>
+                                    <a href="{item.get('url', '#')}" target="_blank" style="text-decoration: none; background: #f1f5f9; color: #2563eb; border: 1px solid #cbd5e1; padding: 0.35rem 0.75rem; border-radius: 8px; font-size: 0.75rem; font-weight: 600; display: inline-flex; align-items: center; justify-content: center;">Maps</a>
                                 </div>
                             </div>
                             <div class="lead-meta">
