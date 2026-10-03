@@ -7,8 +7,8 @@ from sheets_service import get_existing_numbers, update_live_progress
 
 # Configure Streamlit page
 st.set_page_config(
-    page_title="Canvassing Controller | Automated Scraper",
-    page_icon="🎯",
+    page_title="FLEXI-GEN | Fast Leads Extraction & Retention Generator",
+    page_icon="⚡",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -87,9 +87,25 @@ st.markdown(
         line-height: 1.2;
     }
     .app-subtitle {
-        font-size: 0.78rem;
+        font-size: 0.8rem;
+        color: #334155;
+        margin: 0;
+    }
+    .app-tagline {
+        font-size: 0.74rem;
         color: #64748b;
         margin: 0;
+    }
+    .app-slogan {
+        font-size: 0.72rem;
+        color: #0369a1;
+        background: #f0f9ff;
+        border: 1px solid #bae6fd;
+        padding: 0.18rem 0.55rem;
+        border-radius: 9999px;
+        font-style: italic;
+        font-weight: 500;
+        white-space: nowrap;
     }
 
     /* Metric cards */
@@ -287,8 +303,8 @@ st.markdown(
             font-size: 1.05rem !important;
             white-space: nowrap !important;
         }
-        .app-subtitle {
-            display: none !important; /* Hide long subtitle on mobile to keep header clean */
+        .app-subtitle, .app-tagline, .app-slogan {
+            display: none !important; /* Hide on mobile to keep header clean and compact */
         }
         .app-icon {
             width: 30px !important;
@@ -366,14 +382,23 @@ st.markdown(
     """
     <div class="app-header">
         <div class="app-title-box">
-            <div class="app-icon">📍</div>
+            <div class="app-icon">⚡</div>
             <div>
-                <h1 class="app-title">Canvassing Controller</h1>
-                <p class="app-subtitle">Automated Lead Scraper & Real-time Google Sheets Synchronization</p>
+                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                    <h1 class="app-title">FLEXI-GEN</h1>
+                    <span style="font-size: 0.7rem; font-weight: 700; color: #16a34a; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 0.12rem 0.45rem; border-radius: 6px;">v2.0</span>
+                </div>
+                <p class="app-subtitle" style="font-weight: 600; margin-top: 1px;">
+                    Fast Leads Extraction & Exploration Engine for Automated Retention Generation
+                </p>
+                <p class="app-tagline">
+                    Web-Based Google Maps Lead Scraper & Real-Time Sync for Retention Canvassing Productivity
+                </p>
             </div>
         </div>
-        <div>
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.35rem;">
             <span class="status-pill status-idle" id="live-badge">Sistem Aktif</span>
+            <span class="app-slogan">“Generating Quality Leads, Accelerating Retention Canvassing.”</span>
         </div>
     </div>
     """,
@@ -403,19 +428,19 @@ with col_ctrl:
         st.markdown(
             f"""
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem;">
-                <span style="font-size: 1.15rem; font-weight: 700; color: #1e293b;">Canvassing Controller</span>
+                <span style="font-size: 1.15rem; font-weight: 700; color: #1e293b;">⚡ FLEXI-GEN Controller</span>
                 <span class="status-pill {status_class}">{controller.current_status}</span>
             </div>
             """,
             unsafe_allow_html=True,
         )
 
-        # Inner Card (Matching reference UI: "Automated Canvassing")
+        # Inner Card (Matching reference UI: "Automated Canvassing Engine")
         with st.container(border=True):
             st.markdown(
                 """
                 <h4 style="color: #2563eb; font-size: 1.05rem; font-weight: 700; margin-top: 0; margin-bottom: 0.75rem;">
-                    Automated Canvassing
+                    Automated Canvassing Engine
                 </h4>
                 """,
                 unsafe_allow_html=True,

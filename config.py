@@ -1,4 +1,7 @@
-"""Configuration and constants for Canvassing Controller."""
+"""
+FLEXI-GEN: Fast Leads Extraction & Exploration Engine for Automated Retention Generation
+Web-Based Google Maps Lead Scraper & Real-Time Sync for Retention Canvassing Productivity
+"""
 
 DEFAULT_SHEETS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbycnb7EsL_ldH5P_pUTQ9ovaYYZoIc5lfctuB97cmkqcdDVEuml0qBHc7Iqp-Zm7kEOPw/exec"
 
